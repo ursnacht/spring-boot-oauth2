@@ -27,7 +27,7 @@ public class SecurityConfiguration {
 
         http
                 .authorizeHttpRequests()
-                .requestMatchers("/unauthenticated", "/oauth2/**", "/login/**").permitAll()
+                .requestMatchers("/unauthenticated", "/oauth2/**", "/login/**", "/api/logout").permitAll()
                 .anyRequest()
                 .fullyAuthenticated()
                 .and()
