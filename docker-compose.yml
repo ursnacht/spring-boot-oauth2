@@ -17,7 +17,7 @@ services:
     volumes:
       - ./keycloak/realms:/opt/keycloak/data/import
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/started"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -38,7 +38,7 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       keycloak:
-        condition: service_started
+        condition: service_healthy
     networks:
       - spring-keycloak-network
 

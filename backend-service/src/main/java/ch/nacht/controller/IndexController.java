@@ -38,7 +38,7 @@ public class IndexController {
         }};
     }
 
-    @PostMapping(path = "/api/logout")
+    @GetMapping(path = "/api/logout")
     public Map<String, String> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -47,9 +47,7 @@ public class IndexController {
         }
 
         // Construct Keycloak logout URL
-        String keycloakLogoutUrl = issuerUri + "/protocol/openid-connect/logout?redirect_uri=" +
-                                    request.getScheme() + "://" + request.getServerName() + ":" +
-                                    request.getServerPort() + "/unauthenticated";
+        String keycloakLogoutUrl = "http://keycloak:8080/realms/external/protocol/openid-connect/logout";
 
         Map<String, String> logoutResponse = new HashMap<>();
         logoutResponse.put("message", "Logged out successfully");
