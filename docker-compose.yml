@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8080
+      KC_HEALTH_ENABLED: true
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realms:/opt/keycloak/data/import
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/started"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    networks:
+      - spring-keycloak-network
+
+  backend-service:
+    build:
+      context: .
+      dockerfile: backend-service/Dockerfile
+    container_name: backend-service
+    ports:
+      - "8081:8081"
+    environment:
+      KEYCLOAK_ISSUER_URI: http://host.docker.internal:8080/realms/external
+      KEYCLOAK_CLIENT_SECRET: mysecret123
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      keycloak:
+        condition: service_started
+    networks:
+      - spring-keycloak-network
+
+networks:
+  spring-keycloak-network:
+    driver: bridge
