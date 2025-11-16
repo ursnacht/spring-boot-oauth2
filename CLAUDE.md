@@ -107,12 +107,37 @@ The realm is auto-imported from `keycloak/realms/external-realm.json` on startup
 - Test user: testuser/password123
 - Configured redirect URIs for the backend service
 
+## REST API Endpoints
+
+**Public Endpoints:**
+- `GET /unauthenticated` - Test endpoint accessible without authentication
+- `POST /api/logout` - Logout endpoint that invalidates session and returns Keycloak logout URL
+
+**Protected Endpoints (require authentication):**
+- `GET /` - Returns authenticated user information (name, email)
+
+**Logout Endpoint Response:**
+```json
+{
+  "message": "Logged out successfully",
+  "keycloakLogoutUrl": "http://localhost:8080/realms/external/protocol/openid-connect/logout?redirect_uri=http://localhost:8081/unauthenticated"
+}
+```
+
+**Usage Example:**
+```bash
+# Logout (POST request)
+curl -X POST http://localhost:8081/api/logout
+
+# Client should redirect to the keycloakLogoutUrl for complete SSO logout
+```
+
 ## Architecture Notes
 
 **OAuth2 Flow:**
 - Uses Authorization Code grant type
 - Session management policy: ALWAYS (maintains sessions)
-- Public endpoints: `/unauthenticated`, `/oauth2/**`, `/login/**`
+- Public endpoints: `/unauthenticated`, `/oauth2/**`, `/login/**`, `/api/logout`
 - All other endpoints require full authentication
 - Logout redirects to Keycloak's logout endpoint
 
@@ -126,6 +151,7 @@ The realm is auto-imported from `keycloak/realms/external-realm.json` on startup
 - IndexController demonstrates accessing OAuth2User principal
 - User attributes (name, email) are retrieved from SecurityContextHolder
 - Returns data as HashMap (simple JSON responses)
+- Logout endpoint uses SecurityContextLogoutHandler to properly invalidate sessions
 
 ## Docker Architecture
 
