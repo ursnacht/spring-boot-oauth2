@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +40,7 @@ public class IndexController {
     }
 
     @GetMapping(path = "/api/logout")
-    public Map<String, String> logout(HttpServletRequest request, HttpServletResponse response) {
+    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth != null) {
@@ -47,12 +48,16 @@ public class IndexController {
         }
 
         // Construct Keycloak logout URL
-        String keycloakLogoutUrl = "http://keycloak:8080/realms/external/protocol/openid-connect/logout";
+        String keycloakLogoutUrl = issuerUri + "/protocol/openid-connect/logout?post_logout_redirect_uri=" +
+                request.getScheme() + "://" + request.getServerName() + ":" +
+                request.getServerPort() + "/unauthenticated&client_id=external-client";
+        // Map<String, String> logoutResponse = new HashMap<>();
+        // logoutResponse.put("message", "Logged out successfully");
+        // logoutResponse.put("keycloakLogoutUrl", keycloakLogoutUrl);
 
-        Map<String, String> logoutResponse = new HashMap<>();
-        logoutResponse.put("message", "Logged out successfully");
-        logoutResponse.put("keycloakLogoutUrl", keycloakLogoutUrl);
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(keycloakLogoutUrl);
 
-        return logoutResponse;
+        return redirectView;
     }
 }
