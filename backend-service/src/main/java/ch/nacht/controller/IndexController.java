@@ -51,9 +51,10 @@ public class IndexController {
         String keycloakLogoutUrl = issuerUri + "/protocol/openid-connect/logout?post_logout_redirect_uri=" +
                 request.getScheme() + "://" + request.getServerName() + ":" +
                 request.getServerPort() + "/unauthenticated&client_id=external-client";
-        // Map<String, String> logoutResponse = new HashMap<>();
-        // logoutResponse.put("message", "Logged out successfully");
-        // logoutResponse.put("keycloakLogoutUrl", keycloakLogoutUrl);
+        //Map<String, String> logoutResponse = new HashMap<>();
+        //logoutResponse.put("message", "Logged out successfully");
+        //logoutResponse.put("keycloakLogoutUrl", keycloakLogoutUrl);
+        //return logoutResponse;
 
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl(keycloakLogoutUrl);

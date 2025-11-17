@@ -31,8 +31,8 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .fullyAuthenticated()
                 .and()
-                .logout()
-                .logoutSuccessUrl("http://localhost:8080/realms/external/protocol/openid-connect/logout?redirect_uri=http://localhost:8081/unauthenticated");
+                .logout();
+//                .logoutSuccessUrl("http://localhost:8080/realms/external/protocol/openid-connect/logout?post_logout_redirect_uri=http://localhost:8081/unauthenticated&client_id=external-client");
 
         return http.build();
     }
